@@ -7,11 +7,20 @@ echo "Installing xcode..."
 xcode-select --install 2>/dev/null || true
 
 if ! command -v brew &> /dev/null; then
-  echo "Installing Homebrew..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-else
   echo "Homebrew already installed"
+  echo "🍺 Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  # Add brew to PATH for this session
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+
+  # Persist brew in shell startup
+  'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+  source ~/.zshrc
+
+else
+  echo "✅ Homebrew already installed"
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 brew update && brew upgrade
 
@@ -35,11 +44,6 @@ npm install -g \
   react \
   yarn \
   next@latest
-
-echo "Installing python packages..."
-pip install \
-  django \
-  django-admin
 
 echo "Installing apps..."
 brew install --cask \
