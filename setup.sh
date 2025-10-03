@@ -3,10 +3,9 @@ set -e
 
 echo "Setting up mac dev tools..."
 
-# Make sure Xcode Command Line Tools are installed
+echo "Installing xcode..."
 xcode-select --install 2>/dev/null || true
 
-# Install Homebrew if not installed
 if ! command -v brew &> /dev/null; then
   echo "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -14,8 +13,6 @@ if ! command -v brew &> /dev/null; then
 else
   echo "Homebrew already installed"
 fi
-
-# Update & upgrade brew
 brew update && brew upgrade
 
 echo "Installing CLI tools..."
@@ -27,12 +24,11 @@ brew install \
   node \
   python@3.11 \
   postgresql \
-  terraform
+  terraform \
+  gh \
+  1password-cli
 
-# Install Docker (desktop app)
-brew install --cask docker
-
-# Install frontend frameworks
+echo "Installing npm packages..."
 npm install -g \
   typescript \
   create-next-app \
@@ -40,7 +36,7 @@ npm install -g \
   yarn \
   next@latest
 
-# Install python packages
+echo "Installing python packages..."
 pip install \
   django \
   django-admin
@@ -51,7 +47,30 @@ brew install --cask \
   postman \
   pgadmin4 \
   tailscale \
-  1password
+  1password \
+  docker
 
+echo "Configuring Git..."
+
+read -p "Enter your GitHub username: " gh_user
+read -p "Enter your GitHub email: " gh_email
+
+git config --global user.name "$gh_user"
+git config --global user.email "$gh_email"
+git config --global init.defaultBranch main
+
+if [ ! -f "$HOME/.ssh/id_ed25519.pub" ]; then
+  echo "Generating SSH key..."
+  ssh-keygen -t ed25519 -C "$gh_email" -f "$HOME/.ssh/id_ed25519" -N ""
+  eval "$(ssh-agent -s)"
+  ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+  echo "Add this SSH key to GitHub:"
+  cat ~/.ssh/id_ed25519.pub
+  echo "https://github.com/settings/keys"
+fi
+
+echo "Setting up credentials..."
+gh auth login
+eval $(op signin --account acme.1password.com)
 
 echo "Setup complete"
