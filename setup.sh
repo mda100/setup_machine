@@ -8,7 +8,7 @@ xcode-select --install 2>/dev/null || true
 
 if ! command -v brew &> /dev/null; then
   echo "Homebrew already installed"
-  echo "🍺 Installing Homebrew..."
+  echo "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
   # Add brew to PATH for this session
@@ -19,7 +19,7 @@ if ! command -v brew &> /dev/null; then
   source ~/.zshrc
 
 else
-  echo "✅ Homebrew already installed"
+  echo "Homebrew already installed"
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 brew update && brew upgrade
@@ -36,6 +36,11 @@ brew install \
   terraform \
   gh \
   1password-cli
+
+echo "Adding python to PATH..."
+touch ~/.zshrc
+echo 'export PATH="$HOME/Library/Python/3.9/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
 
 echo "Installing npm packages..."
 npm install -g \
