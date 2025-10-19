@@ -26,6 +26,7 @@ brew update && brew upgrade
 
 echo "Installing CLI tools..."
 brew install \
+  gcc \
   awscli \
   google-cloud-sdk \
   curl \
